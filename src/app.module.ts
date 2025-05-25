@@ -5,9 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { join } from 'path';
+import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     MongooseModule.forRoot('mongodb://localhost:27017/nestjs-chat'),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -28,6 +32,8 @@ import { join } from 'path';
       secret: process.env.JWT_SECRET ?? 'nestjs-chat-secret-key',
       signOptions: { expiresIn: '24h' },
     }),
+    AuthModule,
+    ChatModule,
   ],
 })
 export class AppModule {}
