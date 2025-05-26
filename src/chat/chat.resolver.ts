@@ -12,8 +12,8 @@ export class ChatResolver {
   constructor(private chatService: ChatService) {}
 
   @Query(() => [Message])
-  async messages(): Promise<Message[]> {
-    return this.chatService.getMessages();
+  async messages(@CurrentUser() user: User): Promise<Message[]> {
+    return this.chatService.getMessages(user);
   }
 
   @Mutation(() => Message)

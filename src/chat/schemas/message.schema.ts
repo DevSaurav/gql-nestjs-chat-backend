@@ -17,7 +17,7 @@ export class Message {
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   @Field(() => ID)
-  userId: Types.ObjectId;
+  userId: User;
 
   @Field(() => User)
   user: User;

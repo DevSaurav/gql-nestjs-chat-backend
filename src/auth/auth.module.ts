@@ -13,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET ?? 'your-secret-key',
+      secret: process.env.JWT_SECRET ?? 'nestjs-gql-chat-secret',
       signOptions: { expiresIn: '24h' },
     }),
   ],
