@@ -7,4 +7,9 @@ export class SendMessageInput {
   @IsString()
   @IsNotEmpty()
   content: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  receiverId: string;
 }

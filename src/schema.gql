@@ -25,6 +25,8 @@ type Message {
   content: String!
   userId: ID!
   user: User!
+  receiverId: ID!
+  receiver: User!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -52,6 +54,7 @@ input LoginInput {
 
 input SendMessageInput {
   content: String!
+  receiverId: String!
 }
 
 type Subscription {

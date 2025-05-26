@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { PubSub } from 'graphql-subscriptions';
 
 import { Message, MessageDocument } from './schemas/message.schema';
@@ -17,12 +17,19 @@ export class ChatService {
     private authService: AuthService,
   ) { }
 
+  /**
+   * Send messages between the users from chat box
+   * @param sendMessageInput 
+   * @param user 
+   * @returns Object
+   */
   async sendMessage(sendMessageInput: SendMessageInput, user: User): Promise<Message | null> {
-    const { content } = sendMessageInput;
+    const { content, receiverId } = sendMessageInput;
 
     // Create message
     const message = new this.messageModel({
       content,
+      receiverId: new mongoose.Types.ObjectId(receiverId),
       userId: user._id,
     });
 
@@ -31,12 +38,14 @@ export class ChatService {
     // Populate user data for the response
     const populatedMessage = await this.messageModel
       .findById(savedMessage._id)
-      .populate({ path: 'userId', select: 'username email _id createdAt updatedAt' }).exec();
+      .populate({ path: 'userId', select: 'username email _id createdAt updatedAt' })
+      .populate({ path: 'receiverId', select: 'username email _id createdAt updatedAt' }).exec();
     console.log(populatedMessage);
     // Transform for GraphQL response
     const messageWithUser = populatedMessage ? {
       ...populatedMessage?.toObject(),
       user: populatedMessage?.userId,
+      receiver: populatedMessage?.receiverId,
     } : null;
 
     // Publish to subscription
@@ -45,17 +54,29 @@ export class ChatService {
     return messageWithUser;
   }
 
+  /**
+   * Get messages between me and current user from inbox
+   * @param user 
+   * @returns Object
+   */
   async getMessages(user: User): Promise<Message[]> {
     const messages = await this.messageModel
-      .find({userId: user._id})
+      .find({
+        $and: [
+          { $or: [{ userId: user._id }, { receiverId: user._id }] }
+        ]
+      })
       .populate({ path: 'userId', select: 'username email _id createdAt updatedAt' })
-      .sort({ createdAt: 1 })
+      .populate({ path: 'receiverId', select: 'username email _id createdAt updatedAt' })
+      .sort({ createdAt: -1 })
       .exec();
 
     // Transform for GraphQL response
     return messages.map(message => ({
       ...message?.toObject(),
       user: message?.userId,
+      receiver: message?.receiverId,
+
     }));
   }
 

@@ -12,6 +12,7 @@ export class ChatResolver {
   constructor(private chatService: ChatService) {}
 
   @Query(() => [Message])
+  @UseGuards(JwtAuthGuard)
   async messages(@CurrentUser() user: User): Promise<Message[]> {
     return this.chatService.getMessages(user);
   }
