@@ -20,21 +20,23 @@ type AuthResponse {
   user: User!
 }
 
-type Chat {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type Message {
+  _id: ID!
+  content: String!
+  userId: ID!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Query {
-  chat(id: Int!): Chat!
+  messages: [Message!]!
 }
 
 type Mutation {
   register(registerInput: RegisterInput!): AuthResponse!
   login(loginInput: LoginInput!): AuthResponse!
-  createChat(createChatInput: CreateChatInput!): Chat!
-  updateChat(updateChatInput: UpdateChatInput!): Chat!
-  removeChat(id: Int!): Chat!
+  sendMessage(sendMessageInput: SendMessageInput!): Message!
 }
 
 input RegisterInput {
@@ -48,13 +50,10 @@ input LoginInput {
   password: String!
 }
 
-input CreateChatInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input SendMessageInput {
+  content: String!
 }
 
-input UpdateChatInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+type Subscription {
+  messageAdded: Message!
 }

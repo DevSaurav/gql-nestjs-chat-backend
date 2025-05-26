@@ -1,35 +1,34 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Subscription } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { CurrentUser } from '../auth/current-user.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ChatService } from './chat.service';
-import { Chat } from './entities/chat.entity';
-import { CreateChatInput } from './dto/create-chat.input';
-import { UpdateChatInput } from './dto/update-chat.input';
+import { Message } from './schemas/message.schema';
+import { User } from '../auth/schemas/user.schema';
+import { SendMessageInput } from './dto/send-message.input';
 
-@Resolver(() => Chat)
+@Resolver(() => Message)
 export class ChatResolver {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private chatService: ChatService) {}
 
-  @Mutation(() => Chat)
-  createChat(@Args('createChatInput') createChatInput: CreateChatInput) {
-    return this.chatService.create(createChatInput);
+  @Query(() => [Message])
+  async messages(@CurrentUser() user: User): Promise<Message[]> {
+    return this.chatService.getMessages(user);
   }
 
-  @Query(() => [Chat], { name: 'chat' })
-  findAll() {
-    return this.chatService.findAll();
+  @Mutation(() => Message)
+  @UseGuards(JwtAuthGuard)
+  async sendMessage(
+    @Args('sendMessageInput') sendMessageInput: SendMessageInput,
+    @CurrentUser() user: User,
+  ): Promise<Message| null> {
+    return this.chatService.sendMessage(sendMessageInput, user);
   }
 
-  @Query(() => Chat, { name: 'chat' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.chatService.findOne(id);
-  }
-
-  @Mutation(() => Chat)
-  updateChat(@Args('updateChatInput') updateChatInput: UpdateChatInput) {
-    return this.chatService.update(updateChatInput.id, updateChatInput);
-  }
-
-  @Mutation(() => Chat)
-  removeChat(@Args('id', { type: () => Int }) id: number) {
-    return this.chatService.remove(id);
+  @Subscription(() => Message, {
+    name: 'messageAdded',
+  })
+  messageAdded() {
+    return this.chatService.messageAdded();
   }
 }

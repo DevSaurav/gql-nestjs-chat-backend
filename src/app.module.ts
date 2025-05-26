@@ -12,7 +12,7 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://localhost:27017/gql-nestjs-chat'),
+    MongooseModule.forRoot(process.env.DATABASE_URL ?? 'mongodb://localhost:27017/gql-nestjs-chat'),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -29,11 +29,11 @@ import { ConfigModule } from '@nestjs/config';
     }),
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET ?? 'nestjs-chat-secret-key',
+      secret: process.env.JWT_SECRET ?? 'nestjs-gql-chat-secret',
       signOptions: { expiresIn: '24h' },
     }),
     AuthModule,
     ChatModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
