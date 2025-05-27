@@ -32,7 +32,8 @@ type Message {
 }
 
 type Query {
-  messages: [Message!]!
+  messages(receiverId: String!): [Message!]!
+  inbox: [User!]!
 }
 
 type Mutation {

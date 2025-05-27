@@ -13,8 +13,8 @@ export class ChatResolver {
 
   @Query(() => [Message])
   @UseGuards(JwtAuthGuard)
-  async messages(@CurrentUser() user: User): Promise<Message[]> {
-    return this.chatService.getMessages(user);
+  async messages(@CurrentUser() user: User, @Args('receiverId') receiverId: string): Promise<Message[]> {
+    return this.chatService.getMessages(user, receiverId);
   }
 
   @Mutation(() => Message)
@@ -31,5 +31,11 @@ export class ChatResolver {
   })
   messageAdded() {
     return this.chatService.messageAdded();
+  }
+
+  @Query(() => [User])
+  @UseGuards(JwtAuthGuard)
+  async inbox(@CurrentUser() user: User): Promise<User[]> {
+    return this.chatService.getInboxUsers(user);
   }
 }
