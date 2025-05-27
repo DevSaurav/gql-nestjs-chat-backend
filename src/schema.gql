@@ -25,12 +25,15 @@ type Message {
   content: String!
   userId: ID!
   user: User!
+  receiverId: ID!
+  receiver: User!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
 type Query {
-  messages: [Message!]!
+  messages(receiverId: String!): [Message!]!
+  inbox: [User!]!
 }
 
 type Mutation {
@@ -52,6 +55,7 @@ input LoginInput {
 
 input SendMessageInput {
   content: String!
+  receiverId: String!
 }
 
 type Subscription {

@@ -15,12 +15,21 @@ export class Message {
   @Field()
   content: string;
 
+  //user is sender
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   @Field(() => ID)
   userId: User;
 
   @Field(() => User)
   user: User;
+
+  //message receiver
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Field(() => ID)
+  receiverId: User;
+
+  @Field(() => User)
+  receiver: User;
 
   @Prop({ default: Date.now })
   @Field()
