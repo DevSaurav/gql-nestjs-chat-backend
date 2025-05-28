@@ -1,4 +1,4 @@
-# 💬 NestJS GraphQL Chat Backend
+# 💬 GQL Chat Application
 
 A real-time chat backend application built with **NestJS**, **GraphQL Subscriptions**, and **MongoDB**. Supports user authentication, message broadcasting, and active 1:1 chat room interface.
 
@@ -123,6 +123,17 @@ src/
 * ✅ Modular and scalable NestJS architecture
 
 ---
+## 🌐 Enhancements to be done
+
+```bash
+* Message Broker for scaling chat using subscriptions
+* Email and realtime message inbox
+* Enhance authentication with proper auth server with OAUTH standards
+* Merge user inbox with new recent message for a specific users an show inbox based on the chat history
+* User Profile and email validations
+
+
+```
 
 ## 📄 License
 
